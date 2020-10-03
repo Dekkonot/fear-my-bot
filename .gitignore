@@ -1,9 +1,9 @@
 .vscode/
 deps/
 
-guild_data/*
+guild_data/
+logs/
+errors/
 
-*.log
 gateway.json
-
 token.txt
