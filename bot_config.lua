@@ -1,5 +1,5 @@
 return {
-    token = "",
+    token_file_name = "token.txt",
     home = {
         guild = "",
         channel = "",

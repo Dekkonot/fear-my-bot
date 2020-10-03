@@ -1,6 +1,8 @@
 _G.require = require -- Necessary so that Luvit's require works in other modules
 package.path = "modules/?.lua;?/init.lua;"..package.path
 
+local fs = require("fs")
+
 ---@type Discordia
 local Discordia = require("discordia")
 
@@ -140,4 +142,10 @@ Client:once("ready", startup)
 
 Client:on("messageCreate", distributeMessage)
 
-Client:run("Bot "..BOT_CONFIG.token)
+do
+    local token, err = fs.readFileSync(BOT_CONFIG.token_file_name)
+    if not token then
+        error(string.format("Could not read file '%s' because: %s", BOT_CONFIG.token_file_namem, err))
+    end
+    Client:run("Bot "..token)
+end

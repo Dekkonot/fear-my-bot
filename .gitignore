@@ -5,3 +5,5 @@ guild_data/*
 
 *.log
 gateway.json
+
+token.txt
