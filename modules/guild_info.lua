@@ -14,11 +14,9 @@ local SETTINGS_MT = {
 local GUILD_DATA_DIR = "guild_data"
 
 local LogLevel = Discordia.enums.logLevel
-local guildInfoLogger = Discordia.Logger(
-    LogLevel[BOT_CONFIG.log_levels.file],
-    "%F %T",
-    "logs/guild_info.log"
-)
+---@type Logger
+local GUILD_INFO_LOGGER
+
 local Clock = Discordia.Clock()
 
 local pathJoin = pathjoin.pathJoin
@@ -31,10 +29,10 @@ local lastRequest = {} -- For keeping track of how many minutes have passed sinc
 
 local function checkAndMakeDir(name)
     if existsSync(name) then
-        guildInfoLogger:log(LogLevel.debug, "Checked if directory '%s' exists", name)
+        GUILD_INFO_LOGGER:log(LogLevel.debug, "Checked if directory '%s' exists", name)
     else
-        guildInfoLogger:log(LogLevel.info, "Created directory '%s'", name)
         mkdirSync(name)
+        GUILD_INFO_LOGGER:log(LogLevel.info, "Created directory '%s'", name)
     end
 end
 
@@ -45,7 +43,7 @@ end
 local function getTable(guild, name)
     local id = guild.id
 
-    guildInfoLogger:log(LogLevel.debug, "Getting table '%s' for guild `%s` (ID: %s)", name, guild.name, id)
+    GUILD_INFO_LOGGER:log(LogLevel.debug, "Getting table '%s' for guild `%s` (ID: %s)", name, guild.name, id)
 
     lastRequest[id] = BOT_CONFIG.gc_info.max_guild_info_cache
 
@@ -61,17 +59,17 @@ local function getTable(guild, name)
         if existsSync(fileName) then
             local contents, err = readFileSync(fileName)
             if not contents then
-                guildInfoLogger:log(LogLevel.error, "Guild table '%s' couldn't be read because: %s", name, err)
+                GUILD_INFO_LOGGER:log(LogLevel.error, "Guild table '%s' couldn't be read because: %s", name, err)
                 guildTable = {}
                 cache[name] = guildTable
             else
-                guildInfoLogger:log(LogLevel.debug, "Read guild table '%s'", name)
+                GUILD_INFO_LOGGER:log(LogLevel.debug, "Read guild table '%s'", name)
                 local parsed = json.decode(contents)
                 guildTable = parsed
                 cache[name] = parsed
             end
         else
-            guildInfoLogger:log(LogLevel.debug, "Guild table '%s' didn't exist", name)
+            GUILD_INFO_LOGGER:log(LogLevel.debug, "Guild table '%s' didn't exist", name)
             guildTable = {}
             cache[name] = guildTable
         end
@@ -89,13 +87,13 @@ end
 local function setTable(guild, name, newTable)
     local id = guild.id
 
-    guildInfoLogger:log(LogLevel.debug, "Setting table '%s' for guild `%s` (ID: %s)", name, guild.name, id)
+    GUILD_INFO_LOGGER:log(LogLevel.debug, "Setting table '%s' for guild `%s` (ID: %s)", name, guild.name, id)
 
     setmetatable(newTable, nil)
 
     local stringified = json.encode(newTable)
     if not stringified then
-        guildInfoLogger:log(LogLevel.error, "Failed to stringify table '%s'", name)
+        GUILD_INFO_LOGGER:log(LogLevel.error, "Failed to stringify table '%s'", name)
         return false
     end
 
@@ -103,7 +101,7 @@ local function setTable(guild, name, newTable)
     if cache then
         local guildTable = cache[name]
         if guildTable then
-            guildInfoLogger:log(LogLevel.debug, "Updated cache for table '%s'", name)
+            GUILD_INFO_LOGGER:log(LogLevel.debug, "Updated cache for table '%s'", name)
             cache[name] = newTable
         end
     end
@@ -114,7 +112,7 @@ local function setTable(guild, name, newTable)
     local wrote, err = writeFileSync(pathJoin(GUILD_DATA_DIR, id, name) .. ".json", stringified)
 
     if not wrote then
-        guildInfoLogger:log(LogLevel.error, "Guild table '%s' couldn't be written because: %s", name, err)
+        GUILD_INFO_LOGGER:log(LogLevel.error, "Guild table '%s' couldn't be written because: %s", name, err)
         return false
     end
 
@@ -159,7 +157,7 @@ local function decrementLastRequst()
     for id, remainingTime in pairs(lastRequest) do
         remainingTime = remainingTime - 1
         if remainingTime <= 0 then
-            guildInfoLogger:log(LogLevel.debug, "Purged guild '%s' from cache", id)
+            GUILD_INFO_LOGGER:log(LogLevel.debug, "Purged guild '%s' from cache", id)
             guildInfoCache[id] = nil
         end
     end
@@ -167,12 +165,20 @@ end
 
 ---Initializes the mdoule and starts the internal decrement timer.
 local function init()
+    GUILD_INFO_LOGGER = Discordia.Logger(
+        LogLevel[BOT_CONFIG.log_levels.file],
+        "%F %T",
+        "logs/guild_info.log"
+    )
+
+    checkAndMakeDir("guild_data")
+
     Clock:on("min", decrementLastRequst)
 
     Clock:start()
 
-    guildInfoLogger:log(LogLevel.info, "Initialized GuildInfo")
-    guildInfoLogger:log(LogLevel.info, "Cache max life: %i", BOT_CONFIG.gc_info.max_guild_info_cache)
+    GUILD_INFO_LOGGER:log(LogLevel.info, "Initialized GuildInfo")
+    GUILD_INFO_LOGGER:log(LogLevel.info, "Cache max life: %i", BOT_CONFIG.gc_info.max_guild_info_cache)
 end
 
 return {
