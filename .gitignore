@@ -1,0 +1,7 @@
+.vscode/
+deps/
+
+guild_data/*
+
+*.log
+gateway.json
