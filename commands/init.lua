@@ -9,7 +9,8 @@ local pathJoin = pathjoin.pathJoin
 local readdirSync, lstatSync, existsSync =  fs.readdirSync, fs.lstatSync, fs.existsSync
 
 local LogLevel = Discordia.enums.logLevel
-local CommandLogger = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "logs/commands.log")
+---@type Logger
+local COMMAND_LOGGER
 
 local BASE_PERMISSION_OBJECT = Discordia.Permissions.fromMany("readMessages", "sendMessages", "readMessageHistory")
 
@@ -110,22 +111,24 @@ local function reloadCommand(commandName)
     if commandData then
         local path = commandData._path
         if existsSync(path) then
-            CommandLogger:log(LogLevel.info, "Reloaded command '%s'", commandName)
+            COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
             local newCommandData = dofile(path)
             processCommandData(newCommandData, path)
             return true
         end
     end
-    CommandLogger:log(LogLevel.info, "Failed to reload command '%s'", commandName)
+    COMMAND_LOGGER:log(LogLevel.info, "Failed to reload command '%s'", commandName)
     return false
 end
 
 ---Initializes the module and loads all the commands.
 local function init()
+    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "logs/commands.log")
+
     readAndProcessDir(COMMAND_FILE_PATH)
 
-    CommandLogger:log(LogLevel.info, "Initialized commands")
-    CommandLogger:log(LogLevel.info, "Loaded commands: %i", commandCount)
+    COMMAND_LOGGER:log(LogLevel.info, "Initialized commands")
+    COMMAND_LOGGER:log(LogLevel.info, "Loaded commands: %i", commandCount)
     initialized = true
 end
 
