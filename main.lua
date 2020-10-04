@@ -95,8 +95,6 @@ local function guildMessageReceived(message)
             message.channel:sendf("The bot has been up for %s", uptimeString)
             OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
             return
-        elseif commandName == "butt" then
-            error("no u")
         end
         return
     end
