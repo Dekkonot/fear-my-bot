@@ -19,8 +19,8 @@ local args = {
 }
 
 -- Description of each command for help files.
-local description = [[Reloads the command `cmd` from the file tree.
-]]
+local description = [[
+Reloads the command `cmd` from the file tree.]]
 
 -- The code block that gets executed when the command is ran.
 ---@param guild Guild
