@@ -1,0 +1,363 @@
+[selene]
+base = "lua51"
+name = "luajit"
+
+[[bit.tobit.args]]
+type = "number"
+
+
+[[bit.tohex.args]]
+type = "number"
+
+[[bit.tohex.args]]
+type = "number"
+required = false
+
+
+[[bit.bnot.args]]
+type = "number"
+
+
+[[bit.bor.args]]
+type = "number"
+
+[[bit.bor.args]]
+type = "number"
+
+[[bit.bor.args]]
+type = "..."
+required = false
+
+
+[[bit.band.args]]
+type = "number"
+
+[[bit.band.args]]
+type = "number"
+
+[[bit.band.args]]
+type = "..."
+required = false
+
+
+[[bit.bxor.args]]
+type = "number"
+
+[[bit.bxor.args]]
+type = "number"
+
+[[bit.bxor.args]]
+type = "..."
+required = false
+
+
+[[bit.lshift.args]]
+type = "number"
+
+[[bit.lshift.args]]
+type = "number"
+
+
+[[bit.rshift.args]]
+type = "number"
+
+[[bit.rshift.args]]
+type = "number"
+
+
+[[bit.arshift.args]]
+type = "number"
+
+[[bit.arshift.args]]
+type = "number"
+
+
+[[bit.rol.args]]
+type = "number"
+
+[[bit.rol.args]]
+type = "number"
+
+
+[[bit.ror.args]]
+type = "number"
+
+[[bit.ror.args]]
+type = "number"
+
+
+[[bit.bswap.args]]
+type = "number"
+
+
+
+[ffi.C]
+property = true
+
+[ffi.os]
+property = true
+
+[ffi.arch]
+property = true
+
+
+[[ffi.cdef.args]]
+type = "string"
+
+
+[[ffi.load.args]]
+type = "string"
+
+[[ffi.load.args]]
+type = "boolean"
+required = false
+
+
+[[ffi.new.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.new.args]]
+type = "number"
+required = false
+
+[[ffi.new.args]]
+type = "..."
+required = false
+
+
+[[ffi.typeof.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+
+[[ffi.cast.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.cast.args]]
+type = "..."
+requied = false
+
+
+[[ffi.metatype.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.metatype.args]]
+type = "table"
+
+
+[[ffi.gc.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.gc.args]]
+type = "function"
+
+
+[[ffi.sizeof.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.sizeof.args]]
+type = "number"
+required = false
+
+
+[[ffi.alignof.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+
+[[ffi.offsetof.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.offsetof.args]]
+type = "number"
+
+
+[[ffi.istype.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.istype.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+
+[[ffi.errno.args]]
+type = "number"
+required = false
+
+
+[[ffi.string.args]]
+type = "any"
+
+[[ffi.string.args]]
+type = "number"
+required = false
+
+
+[[ffi.copy.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.copy.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.copy.args]]
+type = "number"
+required = false
+
+
+[[ffi.fill.args]]
+type = "any" # Should be `string|ctype|cdata`
+
+[[ffi.fill.args]]
+type = "number"
+
+[[ffi.fill.args]]
+type = "number"
+required = false
+
+
+[[ffi.abi.args]]
+type = [
+    "32bit", "64bit", "le", "be", "fpu",
+    "softfp", "hardfp", "eabi", "win",
+]
+
+
+
+[jit.version]
+property = true
+
+[jit.version_num]
+property = true
+
+[jit.os]
+property = true
+
+[jit.arch]
+property = true
+
+
+[[jit.on.args]]
+type = "boolean"
+
+[[jit.on.args]]
+type = "boolean"
+required = false
+
+
+[[jit.off.args]]
+type = "boolean"
+
+[[jit.off.args]]
+type = "boolean"
+required = false
+
+
+[[jit.flush.args]]
+type = "boolean" # Should be `boolean|number` but Selene doesn't support unions yet
+
+[[jit.flush.args]]
+type = "boolean"
+required = false
+
+
+[jit.status]
+args = {}
+
+# TODO document jit.opt + jit.util (there's no documentation on LuaJIT's main site or wiki)
+
+
+
+[[xpcall.args]]
+type = "function"
+
+[[xpcall.args]]
+type = "function"
+
+[[xpcall.args]]
+type = "..."
+required = false
+
+
+[[string.dump.args]]
+type = "function"
+
+[[string.dump.args]]
+type = "boolean"
+required = false
+
+
+[[load.args]]
+type = "string" # Should be `string|function`
+
+[[load.args]]
+type = "string"
+required = false
+
+[[load.args]]
+type = "string"
+required = false
+
+[[load.args]]
+type = "table"
+required = false
+
+
+[[loadstring.args]]
+type = "string" # Should be `string|function`
+
+[[loadstring.args]]
+type = "string"
+required = false
+
+[[loadstring.args]]
+type = "string"
+required = false
+
+[[loadstring.args]]
+type = "table"
+required = false
+
+
+[[math.log.args]]
+type = "number"
+
+[[math.log.args]]
+type = "number"
+required = false
+
+
+[[string.rep.args]]
+type = "string"
+
+[[string.rep.args]]
+type = "number"
+
+[[string.rep.args]]
+type = "string"
+required = false
+
+
+[[os.exit.args]]
+type = "any" # Should be `number|boolean`
+
+[[os.exit.args]]
+type = "boolean"
+required = false
+
+
+[[package.searchpath.args]]
+type = "string"
+
+[[package.searchpath.args]]
+type = "string"
+
+[[package.searchpath.args]]
+type = "string"
+required = false
+
+[[package.searchpath.args]]
+type = "string"
+required = false
+
+[[package.loadlib.args]]
+type = "string"
+
+[[package.loadlib.args]]
+type = ["*"]
