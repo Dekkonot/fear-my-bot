@@ -199,7 +199,7 @@ local function init()
 
     local home = BOT_CONFIG.home
 
-    -- Initialize client.
+    -- Initialize client
     local client = Discordia.Client({
         cacheAllMembers = true,
         logFile = "logs/discordia.log"
