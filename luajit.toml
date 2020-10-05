@@ -258,7 +258,7 @@ required = false
 
 
 [jit.status]
-args = {}
+args = []
 
 # TODO document jit.opt + jit.util (there's no documentation on LuaJIT's main site or wiki)
 
