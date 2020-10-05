@@ -109,7 +109,7 @@ type = "string"
 type = "string"
 
 [[ffi.load.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
@@ -234,26 +234,26 @@ property = true
 
 
 [[jit.on.args]]
-type = "boolean"
+type = "bool"
 
 [[jit.on.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
 [[jit.off.args]]
-type = "boolean"
+type = "bool"
 
 [[jit.off.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
 [[jit.flush.args]]
-type = "boolean" # Should be `boolean|number` but Selene doesn't support unions yet
+type = "bool" # Should be `bool|number` but Selene doesn't support unions yet
 
 [[jit.flush.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
@@ -279,7 +279,7 @@ required = false
 type = "function"
 
 [[string.dump.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
@@ -335,10 +335,10 @@ required = false
 
 
 [[os.exit.args]]
-type = "any" # Should be `number|boolean`
+type = "any" # Should be `number|bool`
 
 [[os.exit.args]]
-type = "boolean"
+type = "bool"
 required = false
 
 
