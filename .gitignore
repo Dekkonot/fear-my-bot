@@ -5,5 +5,7 @@ guild_data/
 logs/
 errors/
 
+*.toml
+
 gateway.json
 token.txt
