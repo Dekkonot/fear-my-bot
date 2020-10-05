@@ -18,7 +18,7 @@ local args = {
 
 -- Description of each command for help files.
 local description = [[
-]]
+Filler text.]]
 
 -- The code block that gets executed when the command is ran.
 ---@param guild Guild
