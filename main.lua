@@ -188,7 +188,7 @@ local function init()
     -- Read token file
     local token, err = readFileSync(BOT_CONFIG.token_file_name)
     if not token then
-        error(string.format("Could not read file '%s' because: %s", BOT_CONFIG.token_file_namem, err))
+        error(string.format("Could not read file '%s' because: %s", BOT_CONFIG.token_file_name, err))
     end
 
     local home = BOT_CONFIG.home
