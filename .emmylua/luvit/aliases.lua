@@ -1,0 +1,1 @@
+---@alias UV_FAIL any
