@@ -169,10 +169,16 @@ end
 local function init()
     -- Make sure all directories exist
     if not existsSync("logs") then
-        mkdirSync("logs") --todo error check
+        local made, makeErr = mkdirSync("logs")
+        if not made then
+            error(string.format("Could not make folder 'logs' because: %s", makeErr))
+        end
     end
     if not existsSync("errors") then
-        mkdirSync("errors") --todo error check
+        local made, makeErr = mkdirSync("errors")
+        if not made then
+            error(string.format("Could not make folder 'logs' because: %s", makeErr))
+        end
     end
 
     -- Initialize variables + modules
