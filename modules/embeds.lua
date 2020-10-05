@@ -85,7 +85,7 @@ function Embeds.commandHelp(guild, commandData)
     local embed = {
         color = COLORS.helpCommand.value,
         footer = {
-            text = format("Try `%shelp` to get a list of available commands.", prefix),
+            text = format("Try %shelp to get a list of available commands.", prefix),
         },
         description = commandData.description,
         fields = {
