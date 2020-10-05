@@ -6,6 +6,7 @@ logs/
 errors/
 
 *.toml
+*.yml
 
 gateway.json
 token.txt
