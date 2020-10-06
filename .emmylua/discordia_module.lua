@@ -283,7 +283,13 @@ local Discordia = {
         },
     },
 
-    --todo class, extensions, package, storage
+    ---@type LuvitPackage
+    package = nil
+
+    ---@type table
+    storage = nil
+
+    --todo class, extensions
 }
 
 return Discordia
