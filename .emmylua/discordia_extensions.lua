@@ -105,6 +105,75 @@ function table.slice(tbl, start, stop, step)
 
 end
 
+---Splits a string into a table of specially delimited substrings.
+---The default for `delim` is an empty string.
+---@param str string
+---@param delim string
+---@return string[]
+function string.split(str, delim)
+
+end
+
+---Retruns a new string with all whitespace removed from the left and right sides of the original string.
+---@param str string
+---@return string
+function string.split(str)
+
+end
+
+---Returns a new string that is padded up to the desired length with `pattern`.
+---The alignment, either `left`, `right`, or `center`, defines the placement of the original string.
+---The default for `pattern` is a space.
+---@param str string
+---@param len number
+---@param align string | "left" | "right" | "center"
+---@param pattern string
+---@return string
+function string.pad(str, len, align, pattern)
+
+end
+
+---If `plain` is true, returns whether a string starts with the specified substring.
+---Otherwise, returns whether a string starts with the specified pattern.
+---@param str string
+---@param pattern string
+---@param plain boolean
+---@return boolean
+function string.startswith(str, pattern, plain)
+
+end
+
+---If `plain` is true, returns whether a string ends with the specified substring.
+---Otherwise, returns whether a string ends with the specified pattern.
+---@param str string
+---@param pattern string
+---@param plain boolean
+---@return boolean
+function string.endswith(str, pattern, plain)
+
+end
+
+---Returns the [Levenshtein Distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between two strings.
+---A higher number indicates a greater distance.
+---@param str1 string
+---@param str2 string
+---@return number
+function string.levenshtein(str1, str2)
+
+end
+
+---Returns a random string of random characters with the specified length.
+---If provided, the `min` and `max` bounds cannot be outside the range [0, 255].
+---
+---Use `32` and `126` for printable ASCII characters.
+---@param len number
+---@param min number
+---@param max number
+---@return string
+function string.random(len, min, max)
+
+end
+
 ---Returns a number that is clamped between `min` and `max`.
 ---@param n number
 ---@param min number
