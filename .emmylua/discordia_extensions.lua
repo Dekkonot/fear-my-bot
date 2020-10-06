@@ -104,3 +104,21 @@ end
 function table.slice(tbl, start, stop, step)
 
 end
+
+---Returns a number that is clamped between `min` and `max`.
+---@param n number
+---@param min number
+---@param max number
+---@return number
+function math.clamp(n, min, max)
+
+end
+
+---Returns a number that is rounded to the nearest defined digit.
+---Negative values can be used for higher order places, and the default for `digit` is `0`.
+---@param n number
+---@param digits number
+---@return number
+function math.round(n, digits)
+
+end
