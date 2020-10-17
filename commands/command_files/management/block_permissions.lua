@@ -23,7 +23,7 @@ local args = {
 
 -- Description of each command for help files.
 local description = [[
-Blocks a specific user or role from using moderator commands, optionally for a specific command.
+Blocks a specific user or role from using moderator commands or optionally from using a specific command.
 
 If `thing` is a user, that user is blocked from using moderator commands. If `thing` is a role, anyone with that role will automatically be blocked from using moderator commands.
 

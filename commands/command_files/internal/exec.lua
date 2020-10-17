@@ -48,12 +48,12 @@ local signature = "exec [chunk]" -- Type signature of the command for help files
 -- Array of information about arguments for help files.
 --eg: {false, "arg", "This is an argument."}, {true, "optionalArg", "This argument is optional"}
 local args = {
-    {false, "chunk", "The Lua chunk to execute."}
+    {false, "chunk", "The Lua chunk to execute"}
 }
 
 -- Description of each command for help files.
 local description = [[
-Executes an arbitrary `chunk` of Lua code.]]
+Executes an arbitrary chunk of Lua code.]]
 
 -- The code block that gets executed when the command is ran.
 ---@param guild Guild

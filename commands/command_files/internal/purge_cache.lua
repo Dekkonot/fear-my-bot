@@ -25,7 +25,9 @@ local args = {
 local description = [[
 Purges the GuildInfo cache for a specific guild.
 
-If no arguments are provided, the guild the command is run in is purged. If `guildId` is provided, the specified guild will be purged. If `name` is provided, a specific guild table will be purged from the cache rather than the whole cache.]]
+If no arguments are provided, the guild the command is run in is purged. If `guildId` is provided, the specified guild will be purged. If `name` is provided, a specific guild table will be purged from the cache rather than the whole cache.
+
+`guildId` can be subsituted with `$here` to specify the guild the command was run in.]]
 
 -- The code block that gets executed when the command is ran.
 ---@param guild Guild

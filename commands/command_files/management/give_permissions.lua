@@ -23,11 +23,11 @@ local args = {
 
 -- Description of each command for help files.
 local description = [[
-Gives a specific user or role the ability to use moderator commands, optionally for a specific command.
+Gives a specific user or role the ability to use moderator commands or optionally allows them to use a specific command.
 
 If `thing` is a user, that user is allowed to use moderator commands. If `thing` is a role, anyone with that role will automatically be allowed to use moderator commands.
 
-If `command` is given, the `given` thing will only be allowed to use that command.
+If `command` is given, the given `thing` will be allowed to use that command, even if it's moderator only.
 
 Giving someone permissions with this command won't allow them to uses commands that require `Manage Server`, like `giveperms`.
 

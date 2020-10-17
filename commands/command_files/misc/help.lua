@@ -17,7 +17,7 @@ local signature = "help <command>" -- Type signature of the command for help fil
 -- Array of information about arguments for help files.
 --eg: {false, "arg", "This is an argument."}, {true, "optionalArg", "This argument is optional"}
 local args = {
-    {true, "command", "A command to provide more specific help for."}
+    {true, "command", "A command to provide more specific help for"}
 }
 
 -- Description of each command for help files.
@@ -39,7 +39,7 @@ local function command(guild, author, message, args)
         local commandData = Commands.commandMap[args[1]:lower()]
         if commandData then
             if Permissions.canUseCommand(guild, author, commandData) then
-                return message:reply(Embeds.commandHelp(guild, commandData))
+                message:reply(Embeds.commandHelp(guild, commandData))
             end
         end
     end
