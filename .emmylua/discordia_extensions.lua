@@ -117,7 +117,7 @@ end
 ---Retruns a new string with all whitespace removed from the left and right sides of the original string.
 ---@param str string
 ---@return string
-function string.split(str)
+function string.trim(str)
 
 end
 
