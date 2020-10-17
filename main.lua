@@ -221,6 +221,8 @@ local function init()
                 OPERATION_LOGGER:log(LogLevel.error, "Could not find home channel in home guild")
             end
         end
+
+        OPERATION_LOGGER:log(LogLevel.info, "Bot finished loading!")
     end)
 end
 
