@@ -235,9 +235,4 @@ local function init(startupData)
     return client
 end
 
-init{
-    token = "***REMOVED***",
-    command_path = "../test"
-}
-
 return init
