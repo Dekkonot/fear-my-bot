@@ -3,8 +3,6 @@ local pathjoin = require("pathjoin")
 
 local Discordia = require("discordia")
 
-local BOT_CONFIG = require("bot_config")
-
 local pathJoin = pathjoin.pathJoin
 local readdirSync, lstatSync, existsSync =  fs.readdirSync, fs.lstatSync, fs.existsSync
 
@@ -77,8 +75,12 @@ local function processCommandData(data, path)
 end
 
 local function readAndProcessDir(dir)
+    local isExternal = string.find(dir, "^%.%.")
     for _, fileName in ipairs(readdirSync(dir)) do
         local filePath = pathJoin(dir, fileName)
+        if isExternal then -- pathJoin("../foo", "bar") == "foo/bar", so we have to correct it
+            filePath = "../"..filePath
+        end
         local isFile = lstatSync(filePath).type == "file"
         if isFile then
             local commandData = dofile(filePath)
@@ -122,10 +124,13 @@ local function reloadCommand(commandName)
 end
 
 ---Initializes the module and loads all the commands.
-local function init()
-    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "logs/commands.log")
+local function init(botConfig, extraCommandsPath)
+    COMMAND_LOGGER = Discordia.Logger(LogLevel[botConfig.log_levels.command], "%F %T", "../logs/commands.log")
 
     readAndProcessDir(COMMAND_FILE_PATH)
+    if extraCommandsPath then
+        readAndProcessDir(extraCommandsPath)
+    end
 
     COMMAND_LOGGER:log(LogLevel.info, "Initialized commands")
     COMMAND_LOGGER:log(LogLevel.info, "Loaded commands: %i", commandCount)

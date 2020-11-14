@@ -5,12 +5,9 @@ local pathjoin = require("pathjoin")
 local Discordia = require("discordia")
 local json = require("json")
 
-local BOT_CONFIG = require("bot_config")
-local DEFAULT_SETTINGS = require("default_settings")
+local BOT_CONFIG
+local SETTINGS_MT
 
-local SETTINGS_MT = {
-    __index = DEFAULT_SETTINGS
-}
 local GUILD_DATA_DIR = "guild_data"
 
 local LogLevel = Discordia.enums.logLevel
@@ -164,11 +161,16 @@ local function decrementLastRequst()
 end
 
 ---Initializes the mdoule and starts the internal decrement timer.
-local function init()
+local function init(botConfig, settings)
+    BOT_CONFIG = botConfig
+    SETTINGS_MT = {
+        __index = settings
+    }
+
     GUILD_INFO_LOGGER = Discordia.Logger(
         LogLevel[BOT_CONFIG.log_levels.file],
         "%F %T",
-        "logs/guild_info.log"
+        "../logs/guild_info.log"
     )
 
     checkAndMakeDir("guild_data")

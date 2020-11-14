@@ -13,18 +13,14 @@ local GuildInfo = require("guild_info")
 local Permissions = require("permissions")
 local WrapMessage = require("wrap_message")
 
-local BOT_CONFIG = require("bot_config")
-
 local pathJoin = pathjoin.pathJoin
 
 local existsSync, mkdirSync = fs.existsSync, fs.mkdirSync
-local writeFileSync, readFileSync = fs.writeFileSync, fs.readFileSync
+local writeFileSync = fs.writeFileSync
 
 local LogLevel = Discordia.enums.logLevel
 ---@type Logger
-local COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "logs/commands.log")
----@type Logger
-local OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "logs/operations.log")
+local COMMAND_LOGGER, OPERATION_LOGGER
 
 ---@type GuildTextChannel
 local HOME_CHANNEL
@@ -166,16 +162,33 @@ Message:
     end
 end
 
-local function init()
+--- Startup data should contain `token` and may optionally contain `bot_config`, `settings`, and `command_path`.
+local function init(startupData)
+    if type(startupData) ~= "table" then
+        error("Startup data must be provided", 2)
+    end
+    local TOKEN, BOT_CONFIG = startupData.token, startupData.bot_config
+    local DEFAULT_SETTINGS, EXTRA_COMMANDS_PATH = startupData.settings, startupData.command_path
+
+    if not TOKEN then
+        error("Bot needs a token to startup", 2)
+    end
+    if not BOT_CONFIG then
+        BOT_CONFIG = require("default_bot_config")
+    end
+    if not DEFAULT_SETTINGS then
+        DEFAULT_SETTINGS = require("default_settings")
+    end
+
     -- Make sure all directories exist
-    if not existsSync("logs") then
-        local made, makeErr = mkdirSync("logs")
+    if not existsSync("../logs") then
+        local made, makeErr = mkdirSync("../logs")
         if not made then
             error(string.format("Could not make folder 'logs' because: %s", makeErr))
         end
     end
-    if not existsSync("errors") then
-        local made, makeErr = mkdirSync("errors")
+    if not existsSync("../errors") then
+        local made, makeErr = mkdirSync("../errors")
         if not made then
             error(string.format("Could not make folder 'logs' because: %s", makeErr))
         end
@@ -183,31 +196,25 @@ local function init()
 
     -- Initialize variables + modules
     --(yeah I know they're not 'constants', don't judge me)
-    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "logs/commands.log")
-    OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "logs/operations.log")
+    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "../logs/commands.log")
+    OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "../logs/operations.log")
 
-    Commands.init()
-    GuildInfo.init()
+    Commands.init(BOT_CONFIG, EXTRA_COMMANDS_PATH)
+    GuildInfo.init(BOT_CONFIG, DEFAULT_SETTINGS)
 
     SystemTimer:start()
-
-    -- Read token file
-    local token, err = readFileSync(BOT_CONFIG.token_file_name)
-    if not token then
-        error(string.format("Could not read file '%s' because: %s", BOT_CONFIG.token_file_name, err))
-    end
 
     local home = BOT_CONFIG.home
 
     -- Initialize client
     local client = Discordia.Client({
         cacheAllMembers = true,
-        logFile = "logs/discordia.log"
+        logFile = "../logs/discordia.log"
     })
 
     client:on("messageCreate", distributeMessage)
 
-    client:run("Bot "..token)
+    client:run("Bot "..TOKEN)
 
     client:once("ready", function()
         ---@type Guild
@@ -224,6 +231,13 @@ local function init()
 
         OPERATION_LOGGER:log(LogLevel.info, "Bot finished loading!")
     end)
+
+    return client
 end
 
-init()
+init{
+    token = "***REMOVED***",
+    command_path = "../test"
+}
+
+return init
