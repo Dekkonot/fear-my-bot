@@ -4,15 +4,14 @@ local pathjoin = require("pathjoin")
 local Discordia = require("discordia")
 
 local pathJoin = pathjoin.pathJoin
-local readdirSync, lstatSync, existsSync =  fs.readdirSync, fs.lstatSync, fs.existsSync
+local readdirSync, readFileSync = fs.readdirSync, fs.readFileSync
+local lstatSync, existsSync = fs.lstatSync, fs.existsSync
 
 local LogLevel = Discordia.enums.logLevel
 ---@type Logger
 local COMMAND_LOGGER
 
 local BASE_PERMISSION_OBJECT = Discordia.Permissions.fromMany("readMessages", "sendMessages", "readMessageHistory")
-
-local COMMAND_FILE_PATH = pathJoin("commands", "command_files")
 
 local OPTIONAL_ARG_STRING = " (this argument is optional)"
 local ARG_STRING = "`%s` - %s%s"
@@ -74,19 +73,41 @@ local function processCommandData(data, path)
     requiredCommandPerms[commandName] = cmdPerms
 end
 
+local function readFile(filePath)
+    -- I miss Rust.
+    local fileContent, readError = readFileSync(filePath)
+    if not fileContent then
+        return false, string.format("could not read command '%s' because: %s", filePath, readError)
+    end
+    local chunk, compileError = load(fileContent, string.format("command %s", filePath), "t", _G)
+    if not chunk then
+        return false, string.format("could not compile command '%s' because: %s", filePath, compileError)
+    end
+    local ran, commandData = pcall(chunk)
+    if not ran then
+        return false, string.format("could not load command '%s' because: %s", filePath, commandData)
+    end
+    return true, commandData
+end
+
 local function readAndProcessDir(dir)
-    local isExternal = string.find(dir, "^%.%.")
+    if not existsSync(dir) then
+        error(string.format("directory '%s' does not exist", dir), 2)
+    end
+    COMMAND_LOGGER:log(LogLevel.debug, "Loading command directory '%s'", dir)
+
     for _, fileName in ipairs(readdirSync(dir)) do
-        local filePath = pathJoin(dir, fileName)
-        if isExternal then -- pathJoin("../foo", "bar") == "foo/bar", so we have to correct it
-            filePath = "../"..filePath
-        end
-        local isFile = lstatSync(filePath).type == "file"
+        fileName = pathJoin(dir, fileName)
+        local isFile = lstatSync(fileName).type == "file"
         if isFile then
-            local commandData = dofile(filePath)
-            processCommandData(commandData, filePath)
+            COMMAND_LOGGER:log(LogLevel.debug, "Reading file '%s'", fileName)
+            local read, commandData = readFile(fileName)
+            if not read then
+                error(commandData, 2)
+            end
+            processCommandData(commandData, fileName)
         else
-            readAndProcessDir(filePath)
+            readAndProcessDir(fileName)
         end
     end
 end
@@ -114,7 +135,7 @@ local function reloadCommand(commandName)
         local path = commandData._path
         if existsSync(path) then
             COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
-            local newCommandData = dofile(path)
+            local newCommandData = load(path)
             processCommandData(newCommandData, path)
             return true
         end
@@ -127,7 +148,7 @@ end
 local function init(botConfig, extraCommandsPath)
     COMMAND_LOGGER = Discordia.Logger(LogLevel[botConfig.log_levels.command], "%F %T", "../logs/commands.log")
 
-    readAndProcessDir(COMMAND_FILE_PATH)
+    -- initializeCommands()
     if extraCommandsPath then
         readAndProcessDir(extraCommandsPath)
     end

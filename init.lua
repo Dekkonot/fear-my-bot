@@ -1,3 +1,4 @@
+_G.require = require
 local fs = require("fs")
 local pathjoin = require("pathjoin")
 
@@ -232,4 +233,11 @@ local function init(startupData)
     return client
 end
 
-return init
+return {
+    init = init,
+
+    get = require("get"),
+    guildInfo = require("guild_info"),
+    permissions = require("permissions"),
+    wrapMessage = require("wrap_message"),
+}
