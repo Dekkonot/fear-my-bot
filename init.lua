@@ -1,6 +1,3 @@
-_G.require = require -- Necessary so that Luvit's require works in other modules
-package.path = "modules/?.lua;?/init.lua;"..package.path
-
 local fs = require("fs")
 local pathjoin = require("pathjoin")
 
@@ -174,10 +171,10 @@ local function init(startupData)
         error("Bot needs a token to startup", 2)
     end
     if not BOT_CONFIG then
-        BOT_CONFIG = require("default_bot_config")
+        BOT_CONFIG = require("./default_bot_config")
     end
     if not DEFAULT_SETTINGS then
-        DEFAULT_SETTINGS = require("default_settings")
+        DEFAULT_SETTINGS = require("./default_settings")
     end
 
     -- Make sure all directories exist
