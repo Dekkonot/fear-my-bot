@@ -180,10 +180,8 @@ local function reloadCommand(commandName)
         local path = commandData._path
         local internal = commandData._internal
         if internal then
-            package.loaded[path] = nil
-            processInternalCommand(require(path), path)
-            COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
-            return true
+            COMMAND_LOGGER:log(LogLevel.info, "Failed to load command '%s' because it is internal", commandName)
+            return false
         else
             if existsSync(path) then
                 local newCommandData = load(path)
