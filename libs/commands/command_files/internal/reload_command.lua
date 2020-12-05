@@ -1,6 +1,6 @@
 local Commands = require("commands")
 
-local name = "reloadcmd" -- Name of the command.
+local name = "reload" -- Name of the command.
 
 local permissions = {
     bot_owner = true, -- Whether only the bot owner can use this command.
@@ -10,7 +10,7 @@ local permissions = {
 
 local run_perms = {  } -- List of permissions that are required to run the command
 
-local signature = "reloadcmd [cmd]" -- Type signature of the command for help files.
+local signature = "reload [cmd]" -- Type signature of the command for help files.
 
 -- Array of information about arguments for help files.
 --eg: {false, "arg", "This is an argument."}, {true, "optionalArg", "This argument is optional"}
