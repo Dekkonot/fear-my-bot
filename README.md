@@ -19,3 +19,7 @@ With all those in mind, I decided to write a simple framework for Discord bots, 
 - Simple yet powerful permissions - By allowing permissions to be granular and be both per role and user, and per command, server admins are able to pick and choose what commands they want a user to be able to use.
 - Error tolerant - If a command throws, it won't bring the entire bot down and instead the bot owner will be notified.
 - Easy to configure - Changing settings for the bot is easy and servers each have their own settings file that can be manually adjusted (or adjusted with a command).
+
+## Potential Issues
+
+The [`restart`](libs/commands/command_files/internal/restart.lua) command uses a combination of `os.execute`, `jit.os`, and guesswork to restart the bot. If your OS has a better way to spawn a new process, feel free to contribute it, otherwise, you'll just have to make do. I test on Windows.
