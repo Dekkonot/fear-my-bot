@@ -170,7 +170,7 @@ local function init(botConfig, settings)
     GUILD_INFO_LOGGER = Discordia.Logger(
         LogLevel[BOT_CONFIG.log_levels.file],
         "%F %T",
-        "../logs/guild_info.log"
+        "./logs/guild_info.log"
     )
 
     checkAndMakeDir("guild_data")

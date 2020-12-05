@@ -179,14 +179,14 @@ local function init(startupData)
     end
 
     -- Make sure all directories exist
-    if not existsSync("../logs") then
-        local made, makeErr = mkdirSync("../logs")
+    if not existsSync("./logs") then
+        local made, makeErr = mkdirSync("./logs")
         if not made then
             error(string.format("Could not make folder 'logs' because: %s", makeErr))
         end
     end
-    if not existsSync("../errors") then
-        local made, makeErr = mkdirSync("../errors")
+    if not existsSync("./errors") then
+        local made, makeErr = mkdirSync("./errors")
         if not made then
             error(string.format("Could not make folder 'logs' because: %s", makeErr))
         end
@@ -194,8 +194,8 @@ local function init(startupData)
 
     -- Initialize variables + modules
     --(yeah I know they're not 'constants', don't judge me)
-    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "../logs/commands.log")
-    OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "../logs/operations.log")
+    COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "./logs/commands.log")
+    OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "./logs/operations.log")
 
     Commands.init(BOT_CONFIG, EXTRA_COMMANDS_PATH)
     GuildInfo.init(BOT_CONFIG, DEFAULT_SETTINGS)
@@ -207,7 +207,7 @@ local function init(startupData)
     -- Initialize client
     local client = Discordia.Client({
         cacheAllMembers = true,
-        logFile = "../logs/discordia.log"
+        logFile = "./logs/discordia.log"
     })
 
     client:on("messageCreate", distributeMessage)

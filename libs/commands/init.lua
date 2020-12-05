@@ -199,7 +199,7 @@ end
 
 ---Initializes the module and loads all the commands.
 local function init(botConfig, extraCommandsPath)
-    COMMAND_LOGGER = Discordia.Logger(LogLevel[botConfig.log_levels.command], "%F %T", "../logs/commands.log")
+    COMMAND_LOGGER = Discordia.Logger(LogLevel[botConfig.log_levels.command], "%F %T", "./logs/commands.log")
 
     COMMAND_LOGGER:log(LogLevel.debug, "Loading internal commands")
     local rawCommandData = require("commands/command_files")
