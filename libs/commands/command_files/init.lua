@@ -5,7 +5,7 @@ local BASE_DIRECTORY = pathJoin("commands", "command_files")
 
 local commands = {
     ["internal"] = {
-        "ping", "reload_command", "client_info", "purge_cache", "exec",
+        "ping", "reload_command", "client_info", "purge_cache", "exec", "restart"
     },
     ["management"] = {
         "block_permissions", "give_permissions", "reset_permissions", "set_prefix",
