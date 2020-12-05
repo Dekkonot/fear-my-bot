@@ -1,6 +1,7 @@
 local fs = require("fs")
 local pathjoin = require("pathjoin")
 
+---@type Discordia
 local Discordia = require("discordia")
 
 local pathJoin = pathjoin.pathJoin
@@ -11,6 +12,7 @@ local LogLevel = Discordia.enums.logLevel
 ---@type Logger
 local COMMAND_LOGGER
 
+---@type Permissions
 local BASE_PERMISSION_OBJECT = Discordia.Permissions.fromMany("readMessages", "sendMessages", "readMessageHistory")
 
 local OPTIONAL_ARG_STRING = " (this argument is optional)"
@@ -23,7 +25,7 @@ local requiredCommandPerms = {}
 
 local commandCount = 0
 
-local function processCommandData(data, path)
+local function processExternalCommand(data, path)
     local cmdPerms = BASE_PERMISSION_OBJECT:copy()
     for _, perm in ipairs(data.run_perms) do
         cmdPerms:enable(perm)
@@ -65,6 +67,49 @@ local function processCommandData(data, path)
         run = data.command,
 
         _path = path,
+        _internal = false
+    }
+
+    commandCount = commandCount + 1
+
+    commandMap[commandName] = commandData
+    requiredCommandPerms[commandName] = cmdPerms
+end
+
+local function processInternalCommand(data, path)
+    local cmdPerms = BASE_PERMISSION_OBJECT:copy()
+    for _, perm in ipairs(data.run_perms) do
+        cmdPerms:enable(perm)
+    end
+
+    local argList = {}
+    for i, argData in ipairs(data.args) do
+        argList[i] = string.format(ARG_STRING, argData[2], argData[3], argData[1] and OPTIONAL_ARG_STRING or "")
+    end
+
+    local commandName = data.name
+
+    local user_perms = data.permissions
+
+    ---@type Command
+    local commandData = {
+        user_permissions = {
+            bot_owner = user_perms.bot_owner,
+            manage_server = user_perms.manage_server,
+            moderator = user_perms.moderator,
+            fluff = user_perms.fluff,
+        },
+        bot_permissions = cmdPerms,
+
+        name = commandName,
+        signature = data.signature,
+        arguments = argList,
+        description = data.description,
+
+        run = data.command,
+
+        _path = path,
+        _internal = true
     }
 
     commandCount = commandCount + 1
@@ -105,7 +150,7 @@ local function readAndProcessDir(dir)
             if not read then
                 error(commandData, 2)
             end
-            processCommandData(commandData, fileName)
+            processExternalCommand(commandData, fileName)
         else
             readAndProcessDir(fileName)
         end
@@ -133,11 +178,19 @@ local function reloadCommand(commandName)
     local commandData = commandMap[commandName]
     if commandData then
         local path = commandData._path
-        if existsSync(path) then
+        local internal = commandData._internal
+        if internal then
+            package.loaded[path] = nil
+            processInternalCommand(require(path), path)
             COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
-            local newCommandData = load(path)
-            processCommandData(newCommandData, path)
             return true
+        else
+            if existsSync(path) then
+                local newCommandData = load(path)
+                COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
+                processExternalCommand(newCommandData, path)
+                return true
+            end
         end
     end
     COMMAND_LOGGER:log(LogLevel.info, "Failed to reload command '%s'", commandName)
@@ -148,8 +201,14 @@ end
 local function init(botConfig, extraCommandsPath)
     COMMAND_LOGGER = Discordia.Logger(LogLevel[botConfig.log_levels.command], "%F %T", "../logs/commands.log")
 
-    -- initializeCommands()
+    COMMAND_LOGGER:log(LogLevel.debug, "Loading internal commands")
+    local rawCommandData = require("commands/command_files")
+    for _, data in pairs(rawCommandData) do
+        processInternalCommand(data[1], data[2])
+    end
+
     if extraCommandsPath then
+        COMMAND_LOGGER:log(LogLevel.debug, "Loading extra commands")
         readAndProcessDir(extraCommandsPath)
     end
 
