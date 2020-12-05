@@ -211,6 +211,9 @@ local function init(startupData)
     })
 
     client:on("messageCreate", distributeMessage)
+    -- Lets users edit previous messages and have the bot run them
+    -- generally, a very good UX decision with very few drawbacks (unloaded messages don't trigger it)
+    client:on("messageUpdate", distributeMessage)
 
     client:run("Bot "..TOKEN)
 
