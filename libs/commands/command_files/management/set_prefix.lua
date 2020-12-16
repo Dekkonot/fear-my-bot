@@ -30,6 +30,8 @@ Sets the prefix for the bot in this guild. The bot also responds to mentions.]]
 local function command(guild, author, message, args)
     if #args == 0 then
         message:reply("You must specify a prefix.")
+    elseif not args[1]:find("%S") then
+        message:reply("The prefix must not be whitespace.")
     else
         local settings = GuildInfo.getSettings(guild)
         settings.prefix = args[1]
