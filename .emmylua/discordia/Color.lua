@@ -1,7 +1,4 @@
 ---@class Color
-
--- [[Color Fields]] --
-
 ---@field b number
 ---@field g number
 ---@field r number

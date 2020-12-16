@@ -1,7 +1,4 @@
 ---@class VoiceConnection
-
--- [[VoiceConnection Fields]] --
-
 ---@field channel GuildVoiceChannel|nil
 
 local VoiceConnection = {

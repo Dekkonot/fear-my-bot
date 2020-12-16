@@ -1,7 +1,4 @@
 ---@class Container
-
--- [[Container Fields]] --
-
 ---@field client Client
 ---@field parent Container|Client
 

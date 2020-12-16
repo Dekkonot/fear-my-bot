@@ -1,26 +1,28 @@
-local GuildInfo = require("guild_info")
+local AliasManager = require("alias_manager")
 
-local name = "setprefix" -- Name of the command.
+local name = "clearalias" -- Name of the command.
 
 local permissions = {
     bot_owner = false, -- Whether only the bot owner can use this command.
-    manage_server = false, -- Whether you must have `Manage Server` to use this command.
+    manage_server = true, -- Whether you must have `Manage Server` to use this command.
     moderator = false, -- Whether you must be manually given permission to use this command.
 }
 
 local run_perms = {  } -- List of permissions that are required to run the command
 
-local signature = "prefix [newPrefix]" -- Type signature of the command for help files.
+local signature = "clearalias [alias name]" -- Type signature of the command for help files.
 
 -- Array of information about arguments for help files.
 --eg: {false, "arg", "This is an argument."}, {true, "optionalArg", "This argument is optional"}
 local args = {
-    {false, "newPrefix", "The new prefix for the bot"}
+    {false, "alias name", "The name of the aliases to delete"}
 }
 
 -- Description of each command for help files.
 local description = [[
-Sets the prefix for the bot in this guild. The bot also responds to mentions.]]
+Deletes a given alias, freeing it up for a new alias.
+
+This cannot be undone, so be careful!]]
 
 -- The code block that gets executed when the command is ran.
 ---@param guild Guild
@@ -29,18 +31,16 @@ Sets the prefix for the bot in this guild. The bot also responds to mentions.]]
 ---@param args string[]
 local function command(guild, author, message, args)
     if #args == 0 then
-        message:reply("You must specify a prefix.")
-    elseif not args[1]:find("%S") then
-        message:reply("The prefix must not be whitespace.")
+        message:reply("You must specify an alias to delete.")
+        return
+    end
+
+    local removed = AliasManager.removeAlias(guild, args[1])
+
+    if removed then
+        message:reply("Removed the alias.")
     else
-        local settings = GuildInfo.getSettings(guild)
-        settings.prefix = args[1]
-        local success = GuildInfo.setSettings(guild, settings)
-        if success then
-            message.channel:sendf("Set the prefix to `%s`!", args[1])
-        else
-            message:reply("Was unable to set the prefix for the guild. If this continues, message the bot owner.")
-        end
+        message:reply("Could not remove the alias. If this persists, contact the bot owner.")
     end
 end
 

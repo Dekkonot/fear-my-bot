@@ -1,23 +1,11 @@
 ---@class TextChannel
-
--- [[Container Fields]] --
-
 ---@field client Client
 ---@field parent Container|Client
-
--- [[Snowflake Fields]] --
-
 ---@field createdAt number
 ---@field id SnowflakeId
 ---@field timestamp string
-
--- [[Channel Fields]] --
-
 ---@field mentionString string
 ---@field type enums.channelType
-
--- [[TextChannel Fields]] --
-
 ---@field messages WeakCache
 
 local TextChannel = {

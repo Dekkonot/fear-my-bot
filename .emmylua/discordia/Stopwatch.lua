@@ -1,7 +1,4 @@
 ---@class Stopwatch
-
--- [[Stopwatch Fields]] --
-
 ---@field milliseconds number
 
 local Stopwatch = {

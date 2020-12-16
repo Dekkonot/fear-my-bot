@@ -5,6 +5,7 @@ local pathjoin = require("pathjoin")
 ---@type Discordia
 local Discordia = require("discordia")
 
+local AliasManager = require("alias_manager")
 local Commands = require("commands")
 local Get = require("get")
 local GuildInfo = require("guild_info")
@@ -27,6 +28,7 @@ local SystemTimer = Discordia.Stopwatch(true)
 
 Discordia.extensions()
 
+---@param message Message
 local function guildMessageReceived(message)
     local client = message.client
     local botUser = client.user
@@ -90,6 +92,16 @@ local function guildMessageReceived(message)
             OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
             return
         end
+        local aliases = GuildInfo.getTable(message.guild, "aliases")
+        if aliases[commandName] then
+            local escaped, err = AliasManager.escapeAlias(aliases[commandName], args, author)
+            if not escaped then
+                message:reply("Could not run alias because: " .. err .. ".")
+                return
+            end
+            local wrappedMessage = WrapMessage(message, message.member, settings.prefix .. err)
+            guildMessageReceived(wrappedMessage)
+        end
         return
     end
 
@@ -106,14 +118,14 @@ local function guildMessageReceived(message)
 
     local requiredBotPerms = command.bot_permissions
     if guild.me:getPermissions():intersection(requiredBotPerms) == requiredBotPerms then
-        table.remove(args, 1)
+        local newArgs = {table.unpack(args, 2)} -- is this a sin, I wonder?
         COMMAND_LOGGER:log(
             LogLevel.debug,
             "User `%s` (ID: %s) ran command '%s' in guild `%s` (ID: %s)",
             author.name, author.id, commandName, guild.name, guild.id
         )
         command.run(
-            guild, author, message, args
+            guild, author, message, newArgs
         )
     end
 end
@@ -136,11 +148,11 @@ Error:
 
 Guild: %s (ID: %s)
 
-Message:
+Message (ID: %s):
 
-%s]], err, message.guild.name, message.guild.id, message.content)
+%s]], err, message.guild.name, message.guild.id, message.id, message.content)
 
-        local wrote, wroteErr = writeFileSync(pathJoin("errors", message.id), fileContent)
+        local wrote, wroteErr = writeFileSync(pathJoin("errors", message.timestamp), fileContent)
 
         if wrote then
             OPERATION_LOGGER:log(LogLevel.error, "Bot experienced an error. Message and error logged in `errors/%s`.", message.id)
@@ -194,6 +206,7 @@ local function init(startupData)
 
     -- Initialize variables + modules
     --(yeah I know they're not 'constants', don't judge me)
+
     COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "./logs/commands.log")
     OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "./logs/operations.log")
 
@@ -211,6 +224,9 @@ local function init(startupData)
     })
 
     client:on("messageCreate", distributeMessage)
+    -- Lets users edit previous messages and have the bot run them
+    -- generally, a very good UX decision with very few drawbacks (unloaded messages don't trigger it)
+    client:on("messageUpdate", distributeMessage)
 
     client:run("Bot "..TOKEN)
 

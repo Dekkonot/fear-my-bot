@@ -1,7 +1,4 @@
 ---@class ArrayIterable
-
--- [[ArrayIterable Fields]] --
-
 ---@field first any
 ---@field last any
 
