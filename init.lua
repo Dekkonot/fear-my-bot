@@ -117,14 +117,14 @@ local function guildMessageReceived(message)
 
     local requiredBotPerms = command.bot_permissions
     if guild.me:getPermissions():intersection(requiredBotPerms) == requiredBotPerms then
-        table.remove(args, 1)
+        local newArgs = {table.unpack(args, 2)} -- is this a sin, I wonder?
         COMMAND_LOGGER:log(
             LogLevel.debug,
             "User `%s` (ID: %s) ran command '%s' in guild `%s` (ID: %s)",
             author.name, author.id, commandName, guild.name, guild.id
         )
         command.run(
-            guild, author, message, args
+            guild, author, message, newArgs
         )
     end
 end
