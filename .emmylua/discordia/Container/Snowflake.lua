@@ -1,14 +1,8 @@
 ---@alias SnowflakeId string
 
 ---@class Snowflake
-
--- [[Container Fields]] --
-
 ---@field client Client
 ---@field parent Container|Client
-
--- [[Snowflake Fields]] --
-
 ---@field createdAt number
 ---@field id SnowflakeId
 ---@field timestamp string

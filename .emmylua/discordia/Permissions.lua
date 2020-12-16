@@ -1,7 +1,4 @@
 ---@class Permissions
-
--- [[Permissions Fields]] --
-
 ---@field value number
 
 local Permissions = {

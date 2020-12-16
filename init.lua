@@ -205,6 +205,7 @@ local function init(startupData)
 
     -- Initialize variables + modules
     --(yeah I know they're not 'constants', don't judge me)
+
     COMMAND_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.command], "%F %T", "./logs/commands.log")
     OPERATION_LOGGER = Discordia.Logger(LogLevel[BOT_CONFIG.log_levels.operation], "%F %T", "./logs/operations.log")
 
