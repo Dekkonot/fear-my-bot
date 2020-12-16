@@ -5,6 +5,7 @@ local pathjoin = require("pathjoin")
 ---@type Discordia
 local Discordia = require("discordia")
 
+local AliasManager = require("alias_manager")
 local Commands = require("commands")
 local Get = require("get")
 local GuildInfo = require("guild_info")
@@ -89,6 +90,16 @@ local function guildMessageReceived(message)
             message.channel:sendf("The bot has been up for %s", uptimeString)
             OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
             return
+        end
+        local aliases = GuildInfo.getTable(message.guild, "aliases")
+        if aliases[commandName] then
+            local escaped, err = AliasManager.escapeAlias(aliases[commandName], args, author)
+            if not escaped then
+                message:reply("Could not run alias because: " .. err .. ".")
+                return
+            end
+            local wrappedMessage = WrapMessage(message, message.member, settings.prefix .. err)
+            guildMessageReceived(wrappedMessage)
         end
         return
     end
