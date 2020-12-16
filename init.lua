@@ -28,6 +28,7 @@ local SystemTimer = Discordia.Stopwatch(true)
 
 Discordia.extensions()
 
+---@param message Message
 local function guildMessageReceived(message)
     local client = message.client
     local botUser = client.user
