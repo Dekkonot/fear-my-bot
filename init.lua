@@ -82,8 +82,7 @@ local function guildMessageReceived(message)
                     local cmdString = settings.prefix .. table.concat(args, " ", 3)
                     local wrappedMessage = WrapMessage(message, member, cmdString)
                     COMMAND_LOGGER:log(LogLevel.warning, "Running command `%s` with user `%s` (ID: %s) as the author", cmdString, member.user.name, member.user.id)
-                    guildMessageReceived(wrappedMessage)
-                    return true
+                    return guildMessageReceived(wrappedMessage)
                 else
                     message:reply(member)
                     return true
@@ -109,7 +108,7 @@ local function guildMessageReceived(message)
                 return true
             end
             local wrappedMessage = WrapMessage(message, message.member, settings.prefix .. err)
-            guildMessageReceived(wrappedMessage)
+            return guildMessageReceived(wrappedMessage)
         end
         return false
     end
@@ -142,13 +141,6 @@ end
 
 ---@param message Message
 local function distributeMessage(message)
-    if message.author.bot then return end
-    if not message.content:find("%S") then return end
-
-    if not message.guild then
-        return --! Temptation is to allow non-guild messages via virtual server, but that's outside of scope
-    end
-
     local ranSuccessfully, err = pcall(guildMessageReceived, message)
 
     if not ranSuccessfully then
@@ -241,6 +233,10 @@ local function init(startupData)
     })
 
     local function processMessageHooks(message)
+        if message.author.bot then return end
+        if not message.guild then return end
+        if not message.content:find("%S") then return end
+
         local intercept
         if beforeMessageHooks then
             for _, hook in ipairs(beforeMessageHooks) do
