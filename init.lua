@@ -28,6 +28,10 @@ local SystemTimer = Discordia.Stopwatch(true)
 
 Discordia.extensions()
 
+local HookType = Discordia.enums.enum {
+    MessageCreate = 1,
+}
+
 ---@param message Message
 local function guildMessageReceived(message)
     local client = message.client
@@ -172,13 +176,15 @@ Message (ID: %s):
     end
 end
 
---- Startup data should contain `token` and may optionally contain `bot_config`, `settings`, and `command_path`.
+--- Startup data should contain `token` and may optionally contain:
+--- `bot_config`, `settings`, `hooks`, and `command_path`.
 local function init(startupData)
     if type(startupData) ~= "table" then
         error("Startup data must be provided", 2)
     end
     local TOKEN, BOT_CONFIG = startupData.token, startupData.bot_config
     local DEFAULT_SETTINGS, EXTRA_COMMANDS_PATH = startupData.settings, startupData.command_path
+    local HOOKS = startupData.hooks
 
     if not TOKEN then
         error("Bot needs a token to startup", 2)
@@ -189,6 +195,8 @@ local function init(startupData)
     if not DEFAULT_SETTINGS then
         DEFAULT_SETTINGS = require("./default_settings")
     end
+
+    local messageHooks = HOOKS[HookType.MessageCreate]
 
     -- Make sure all directories exist
     if not existsSync("./logs") then
@@ -223,10 +231,22 @@ local function init(startupData)
         logFile = "./logs/discordia.log"
     })
 
-    client:on("messageCreate", distributeMessage)
+    local function processMessageHooks(message)
+        if messageHooks then
+            for _, hook in ipairs(messageHooks) do
+                local intercept = hook(message)
+                if intercept then
+                    return
+                end
+            end
+        end
+        distributeMessage(message)
+    end
+
+    client:on("messageCreate", processMessageHooks)
     -- Lets users edit previous messages and have the bot run them
     -- generally, a very good UX decision with very few drawbacks (unloaded messages don't trigger it)
-    client:on("messageUpdate", distributeMessage)
+    client:on("messageUpdate", processMessageHooks)
 
     client:run("Bot "..TOKEN)
 
@@ -256,4 +276,6 @@ return {
     guildInfo = require("guild_info"),
     permissions = require("permissions"),
     wrapMessage = require("wrap_message"),
+
+    HookType = HookType,
 }
