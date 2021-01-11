@@ -29,7 +29,7 @@ local SystemTimer = Discordia.Stopwatch(true)
 Discordia.extensions()
 
 local HookType = Discordia.enums.enum {
-    MessageCreate = 1,
+    Message = 1,
 }
 
 ---@param message Message
@@ -196,7 +196,7 @@ local function init(startupData)
         DEFAULT_SETTINGS = require("./default_settings")
     end
 
-    local messageHooks = HOOKS[HookType.MessageCreate]
+    local messageHooks = HOOKS[HookType.Message]
 
     -- Make sure all directories exist
     if not existsSync("./logs") then
