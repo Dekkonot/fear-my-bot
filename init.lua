@@ -29,7 +29,8 @@ local SystemTimer = Discordia.Stopwatch(true)
 Discordia.extensions()
 
 local HookType = Discordia.enums.enum {
-    Message = 1,
+    BeforeCommands = 1,
+    AfterCommands = 2,
 }
 
 ---@param message Message
@@ -56,7 +57,9 @@ local function guildMessageReceived(message)
             args[1] = string.sub(args[1], #prefix + 1)
             continue = true
         end
-        if not continue then return end
+        if not continue then
+            return false
+        end
     end
 
     local commandName = args[1]:lower()
@@ -68,10 +71,11 @@ local function guildMessageReceived(message)
             COMMAND_LOGGER:log(LogLevel.warning, "User `%s` (ID: %s) ran `runas` in guild `%s` (ID: %s)", author.name, author.id, guild.name, guild.id)
             if author.id ~= client.owner.id then
                 COMMAND_LOGGER:log(LogLevel.warning, "Tried to run command `%s%s` on mention string `%s`", settings.prefix, table.concat(args, " ", 3), args[2])
+                return false
             else
                 if not args[2] then
                     message:reply("`runas` requires a user as the second argument")
-                    return
+                    return true
                 end
                 local gotMember, member = Get.member(guild, args[2])
                 if gotMember then
@@ -79,11 +83,12 @@ local function guildMessageReceived(message)
                     local wrappedMessage = WrapMessage(message, member, cmdString)
                     COMMAND_LOGGER:log(LogLevel.warning, "Running command `%s` with user `%s` (ID: %s) as the author", cmdString, member.user.name, member.user.id)
                     guildMessageReceived(wrappedMessage)
+                    return true
                 else
                     message:reply(member)
+                    return true
                 end
             end
-            return
         elseif commandName == "uptime" then
             COMMAND_LOGGER:log(
                 LogLevel.debug,
@@ -94,19 +99,19 @@ local function guildMessageReceived(message)
             local uptimeString = uptime:toString()
             message.channel:sendf("The bot has been up for %s", uptimeString)
             OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
-            return
+            return true
         end
         local aliases = GuildInfo.getTable(message.guild, "aliases")
         if aliases[commandName] then
             local escaped, err = AliasManager.escapeAlias(aliases[commandName], args, author)
             if not escaped then
                 message:reply("Could not run alias because: " .. err .. ".")
-                return
+                return true
             end
             local wrappedMessage = WrapMessage(message, message.member, settings.prefix .. err)
             guildMessageReceived(wrappedMessage)
         end
-        return
+        return false
     end
 
     local commandAllowed = Permissions.canUseCommand(guild, author, command)
@@ -117,7 +122,7 @@ local function guildMessageReceived(message)
             "User `%s` (ID: %s) tried to use forbidden command '%s' in guild `%s` (ID: %s)",
             author.name, author.id, commandName, guild.name, guild.id
         )
-        return
+        return false
     end
 
     local requiredBotPerms = command.bot_permissions
@@ -132,6 +137,7 @@ local function guildMessageReceived(message)
             guild, author, message, newArgs
         )
     end
+    return true
 end
 
 ---@param message Message
@@ -173,7 +179,9 @@ Message (ID: %s):
                 },
             })
         end
+        return true
     end
+    return err
 end
 
 --- Startup data should contain `token` and may optionally contain:
@@ -196,7 +204,8 @@ local function init(startupData)
         DEFAULT_SETTINGS = require("./default_settings")
     end
 
-    local messageHooks = HOOKS[HookType.Message]
+    local beforeMessageHooks = HOOKS[HookType.BeforeCommands]
+    local afterMessageHooks = HOOKS[HookType.AfterCommands]
 
     -- Make sure all directories exist
     if not existsSync("./logs") then
@@ -232,15 +241,27 @@ local function init(startupData)
     })
 
     local function processMessageHooks(message)
-        if messageHooks then
-            for _, hook in ipairs(messageHooks) do
-                local intercept = hook(message)
+        local intercept
+        if beforeMessageHooks then
+            for _, hook in ipairs(beforeMessageHooks) do
+                intercept = hook(message)
                 if intercept then
                     return
                 end
             end
         end
-        distributeMessage(message)
+        intercept = distributeMessage(message)
+        if intercept then
+            return
+        end
+        if afterMessageHooks then
+            for _, hook in ipairs(afterMessageHooks) do
+                intercept = hook(message)
+                if intercept then
+                    return
+                end
+            end
+        end
     end
 
     client:on("messageCreate", processMessageHooks)
