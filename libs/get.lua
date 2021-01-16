@@ -173,7 +173,7 @@ local function getTextChannel(guild, mention)
             if string.find(mention, "^#") then
                 channel = guildChannels:get(string.sub(mention, 2))
             elseif string.find(mention, "^<#%d+>$") then
-                channel = guildChannels:get(string.match(mention, "<(%d+)>"))
+                channel = guildChannels:get(string.match(mention, "<#(%d+)>"))
             end
         end
 
