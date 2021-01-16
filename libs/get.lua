@@ -161,8 +161,53 @@ local function getRole(guild, mention, allowManaged)
     end
 end
 
+---@param guild Guild
+---@param mention string
+local function getTextChannel(guild, mention)
+    local guildChannels = guild.textChannels
+
+    do
+        ---@type GuildTextChannel
+        local channel = guildChannels:get(mention)
+        if not channel then
+            if string.find(mention, "^#") then
+                channel = guildChannels:get(string.sub(mention, 2))
+            elseif string.find(mention, "^<#%d+>$") then
+                channel = guildChannels:get(string.match(mention, "<(%d+)>"))
+            end
+        end
+
+        if channel then
+            return true, channel
+        end
+    end
+
+    local count = 0
+    ---@type GuildTextChannel
+    local found
+
+    local mentionLen = #mention
+    local mentionLower = string.lower(mention)
+
+    for _, channel in pairs(guildChannels) do
+        if string.sub(channel.name, 1, mentionLen) == mentionLower then
+            found = channel
+            count = count + 1
+        end
+    end
+
+    if count == 1 then
+        return true, found
+    elseif count == 0 then
+        return false, "No channels were found by that name/ID. Try using the channel's exact ID."
+    else
+        return false, "Multiple channels were found by that name/ID. Try using the channel's exact ID."
+    end
+end
+
 return {
     member = getMember,
     guild = getGuild,
     role = getRole,
+    textChannel = getTextChannel,
 }
