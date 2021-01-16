@@ -155,16 +155,18 @@ Message (ID: %s):
 
 %s]], err, message.guild.name, message.guild.id, message.id, message.content)
 
-        local wrote, wroteErr = writeFileSync(pathJoin("errors", message.id .. ".txt"), fileContent)
+        local path = pathJoin("errors", message.id .. ".txt")
+
+        local wrote, wroteErr = writeFileSync(path, fileContent)
 
         if wrote then
-            OPERATION_LOGGER:log(LogLevel.error, "Bot experienced an error. Message and error logged in `errors/%s.txt`.", message.id)
+            OPERATION_LOGGER:log(LogLevel.error, "Bot experienced an error. Message and error logged in `%s`.", path)
         else
             OPERATION_LOGGER:log(LogLevel.error, "Bot experienced an error and could not log it because: %s.", wroteErr)
         end
 
         if HOME_CHANNEL then
-            HOME_CHANNEL:send(Embeds.error(message, err))
+            HOME_CHANNEL:send(Embeds.error(message, err, path))
         end
         return true
     end

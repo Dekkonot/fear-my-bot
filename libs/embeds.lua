@@ -113,11 +113,11 @@ function Embeds.commandHelp(guild, commandData)
     return {embed = embed}
 end
 
-function Embeds.error(message, err)
+function Embeds.error(message, err, logLocation)
     return {embed = {
         color = COLORS.error.value,
         description = format("```\n%s\n```", err),
-        field = {
+        fields = {
             {
                 name = "Message ID",
                 value = format("`%s`", message.id),
@@ -133,6 +133,11 @@ function Embeds.error(message, err)
                 value = format("`%s`", string.match(message.content, "^([^ ]+)")),
                 inline = true,
             },
+            {
+                name = "Logged At",
+                value = format("`%s`", logLocation),
+                inline = true,
+            }
         },
         timestamp = message.timestamp,
         title = "Error"
