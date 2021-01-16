@@ -11,6 +11,7 @@ local Get = require("get")
 local GuildInfo = require("guild_info")
 local Permissions = require("permissions")
 local WrapMessage = require("wrap_message")
+local Embeds = require("embeds")
 
 local pathJoin = pathjoin.pathJoin
 
@@ -163,13 +164,7 @@ Message (ID: %s):
         end
 
         if HOME_CHANNEL then
-            HOME_CHANNEL:send({
-                content = string.format("Bot experienced an error. Message and error logged in `errors/%s`.", message.id),
-                file = {
-                    "error_"..message.id,
-                    fileContent
-                },
-            })
+            HOME_CHANNEL:send(Embeds.error(message, err))
         end
         return true
     end

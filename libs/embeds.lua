@@ -10,6 +10,7 @@ local COLORS = {
     ["clientInfo"] = Color.fromRGB(127, 0, 127),
     ["help"] = Color.fromRGB(0, 255, 0),
     ["helpCommand"] = Color.fromRGB(0, 255, 0),
+    ["error"] = Color.fromRGB(128, 0, 0)
 }
 
 local Embeds = {}
@@ -110,6 +111,32 @@ function Embeds.commandHelp(guild, commandData)
     end
 
     return {embed = embed}
+end
+
+function Embeds.error(message, err)
+    return {embed = {
+        color = COLORS.error.value,
+        description = format("```\n%s\n```", err),
+        field = {
+            {
+                name = "Message ID",
+                value = format("`%s`", message.id),
+                inline = true,
+            },
+            {
+                name = "Guild",
+                value = message.guild.name,
+                inline = true,
+            },
+            {
+                name = "Command",
+                value = format("`%s`", string.match(message.content, "^([^ ]+)")),
+                inline = true,
+            },
+        },
+        timestamp = message.timestamp,
+        title = "Error"
+    }}
 end
 
 return Embeds
