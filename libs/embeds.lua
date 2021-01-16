@@ -89,7 +89,7 @@ function Embeds.commandHelp(guild, commandData)
             text = format("Try %shelp to get a list of available commands.", prefix),
         },
         description = commandData.description,
-        field = {
+        fields = {
             {
                 name = "Format",
                 value = format("`%s%s`", prefix, commandData.signature),
