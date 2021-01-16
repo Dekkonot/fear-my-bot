@@ -11,7 +11,7 @@ local commands = {
         "block_permissions", "give_permissions", "reset_permissions", "set_prefix",
     },
     ["misc"] = {
-        "help", "alias", "view_alias", "clear_alias"
+        "help", "alias", "view_alias", "clear_alias", "echo"
     }
 }
 
