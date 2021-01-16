@@ -180,7 +180,7 @@ local function init(botConfig, settings)
     Clock:start()
 
     GUILD_INFO_LOGGER:log(LogLevel.info, "Initialized GuildInfo")
-    GUILD_INFO_LOGGER:log(LogLevel.info, "Cache max life: %i", BOT_CONFIG.gc_info.max_guild_info_cache)
+    GUILD_INFO_LOGGER:log(LogLevel.info, "Cache max life: %imins", BOT_CONFIG.gc_info.max_guild_info_cache)
 end
 
 return {
