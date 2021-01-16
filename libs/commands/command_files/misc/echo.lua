@@ -39,7 +39,7 @@ local function command(guild, author, message, args)
     ---@type GuildTextChannel
     local recepient
     do
-        local found, channel = Get.textChannel(guild, arg[1])
+        local found, channel = Get.textChannel(guild, args[1])
         if found then
             text = table.concat(args, " ", 2)
             recepient = channel
