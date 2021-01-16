@@ -184,7 +184,11 @@ local function reloadCommand(commandName)
             return false
         else
             if existsSync(path) then
-                local newCommandData = load(path)
+                local loaded, newCommandData = readFile(path)
+                if not loaded then
+                    COMMAND_LOGGER:log(LogLevel.info, "Failed to reload command '%s' because ", commandName, newCommandData)
+                    return false
+                end
                 COMMAND_LOGGER:log(LogLevel.info, "Reloaded command '%s'", commandName)
                 processExternalCommand(newCommandData, path)
                 return true
