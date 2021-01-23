@@ -4,7 +4,7 @@ local name = "setprefix" -- Name of the command.
 
 local permissions = {
     bot_owner = false, -- Whether only the bot owner can use this command.
-    manage_server = false, -- Whether you must have `Manage Server` to use this command.
+    manage_server = true, -- Whether you must have `Manage Server` to use this command.
     moderator = false, -- Whether you must be manually given permission to use this command.
 }
 
