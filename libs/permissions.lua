@@ -77,6 +77,9 @@ local function canUseCommand(guild, user, commandData)
     end
 
     local guildMember = guild:getMember(user)
+    if not guildMember then
+        return false
+    end
 
     local canManageServer = guildMember:hasPermission("manageGuild")
     local isMod = false
