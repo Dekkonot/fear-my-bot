@@ -45,7 +45,6 @@ local function command(guild, author, message, args)
             recepient = channel
         else
             text = table.concat(args, " ")
-            message:reply(channel)
             recepient = message.channel
         end
     end
