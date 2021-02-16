@@ -36,11 +36,39 @@ local function command(guild, author, message, args)
     if #args == 0 then
         message:reply(Embeds.help(guild, author))
     else
-        local commandData = Commands.commandMap[args[1]:lower()]
+        local commandName = args[1]:lower()
+        local commandData = Commands.commandMap[commandName]
         if commandData then
             if Permissions.canUseCommand(guild, author, commandData) then
                 message:reply(Embeds.commandHelp(guild, commandData))
             end
+        elseif commandName == "runas" then
+            if guild.client.owner.id == author.id then
+                message:reply(Embeds.commandHelp(guild, {
+                    user_permissions = {
+                        bot_owner = true,
+                        manage_server = false,
+                        moderator = false,
+                    },
+                    description = "Runs a command as another user.",
+                    signature = "runas [user] [command]",
+                    arguments = {
+                        "`user` - The user to run the command as",
+                        "`command` - The command to run (without the prefix)"
+                    },
+                }))
+            end
+        elseif commandName == "uptime" then
+            message:reply(Embeds.commandHelp(guild, {
+                user_permissions = {
+                    bot_owner = false,
+                    manage_server = false,
+                    moderator = false,
+                },
+                description = "Sends a message indicating how long the bot has been running.",
+                signature = "uptime",
+                arguments = {},
+            }))
         end
     end
 end

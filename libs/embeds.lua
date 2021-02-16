@@ -51,6 +51,8 @@ function Embeds.help(guild, user)
     local settings = GuildInfo.getSettings(guild)
     local prefix = settings.prefix
     local usableCommands = Permissions.usableCommandList(guild, user)
+
+    local isOwner = guild.client.owner.id == user.id
     return {embed = {
         color = COLORS.help.value,
         footer = {
@@ -58,9 +60,9 @@ function Embeds.help(guild, user)
         },
         description = format([[This is a list of all commands that are available to you. For help with a particular command, use `%shelp` followed by that command's name (for example: `%shelp help`)
 ```
-%s
+%s%s, %suptime
 ```
-]], prefix, prefix, usableCommands),
+]], prefix, prefix, usableCommands, isOwner and format(", %srunas", prefix) or "", prefix),
     }}
 end
 
