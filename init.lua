@@ -193,6 +193,9 @@ local function init(startupData)
     if not DEFAULT_SETTINGS then
         DEFAULT_SETTINGS = require("./default_settings")
     end
+    if not HOOKS then
+        HOOKS = {}
+    end
 
     local beforeMessageHooks = HOOKS[HookType.BeforeCommands]
     local afterMessageHooks = HOOKS[HookType.AfterCommands]
