@@ -37,6 +37,7 @@ local HookType = Discordia.enums.enum {
 ---@param message Message
 local function guildMessageReceived(message)
     local client = message.client
+    ---@type User
     local botUser = client.user
 
     local author = message.author
@@ -48,7 +49,7 @@ local function guildMessageReceived(message)
     do
         local continue = false
         local prefix = settings.prefix
-        local mentionString = botUser.mentionString
+        local mentionString = string.format("<@%s>", botUser.id) -- fixes issues if the bot has a nickname
 
         if string.sub(message.content, 1, #mentionString + 1) == mentionString.." " then
             args = string.split(string.sub(message.content, #mentionString + 2), " ")
