@@ -32,7 +32,7 @@ When aliases are invoked, any instance of `%n` (where n is a number) is substitu
 
 Likewise:
   • The entire argument string can be specified with `%0`.
-  • A range of arguments from argument `x` to argument `y can be specified with `%x..%y`.
+  • A range of arguments from argument `x` to argument `y` can be specified with `%x..%y`.
   • An open ended range from argument `x` onwards can be specified with `%x..`. Use `%1..%x` to specify the other way.
   • The invoking user's ID can be specified via `%me`. This ID is usable in all commands.
   • The `%` character can be specified with `%%`.
