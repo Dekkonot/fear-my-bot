@@ -38,15 +38,17 @@ Uses `start` on Windows, `open` on OSX, and `xdg-open` on Linux.]]
 ---@param message Message
 ---@param args string[]
 local function command(guild, author, message, args)
+    --TODO log this
     guild.client:stop()
     if not BOT_STRING then
         os.exit(0)
     end
 
+    --TODO investigate whether we need start/open
     if OS_STRING == "Windows" then
         os.execute("start " .. BOT_STRING)
     elseif OS_STRING == "Linux" then
-        os.execute("xdg-open " .. BOT_STRING)
+        os.execute(BOT_STRING)
     elseif OS_STRING == "OSX" then
         os.execute("open " .. BOT_STRING)
     end
