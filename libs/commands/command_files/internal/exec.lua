@@ -1,6 +1,6 @@
 local prettyPrint = require("pretty-print")
 
-local Discordia = require("Discordia")
+local Discordia = require("discordia")
 
 local Commands = require("Commands")
 local Embeds = require("embeds")
