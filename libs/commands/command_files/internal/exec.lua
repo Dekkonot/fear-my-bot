@@ -2,7 +2,7 @@ local prettyPrint = require("pretty-print")
 
 local Discordia = require("discordia")
 
-local Commands = require("Commands")
+local Commands = require("commands")
 local Embeds = require("embeds")
 local Get = require("get")
 local GuildInfo = require("guild_info")
