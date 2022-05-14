@@ -1,4 +1,8 @@
-local timer = require("timer")
+local OS = jit.os
+
+local packets = 1
+
+local COMMAND_STRING = string.format("ping discord.com -c %i -t 255 -q", packets)
 
 local name = "ping" -- Name of the command.
 
@@ -26,14 +30,21 @@ Pings the bot, making it show the delay between the client and Discord's server]
 ---@param message Message
 ---@param args string[]
 local function command(guild, author, message, args)
-	local elapsedTime = 0
-	local commandTimer = timer.setInterval(1, function() -- Finally, an accurate timer
-		elapsedTime = elapsedTime + 1
-	end)
 	local pingMessage = message:reply("Ping! :ping_pong:")
-	timer.clearInterval(commandTimer)
-
-	pingMessage:setContent(string.format("Pong! :ping_pong: **[%u ms]**", elapsedTime))
+	
+	local pingHandle, output, ping
+	if OS == "Linux" then
+		pingHandle = io.popen(COMMAND_STRING)
+		output = pingHandle:read("*a")
+		local min, avg, max, _ = output:match("(%d+%.%d+)/(%d+%.%d+)/(%d+%.%d+)/(%d+%.%d+) ms")
+		pingMessage:setContent(string.format("Pong! :ping_pong: **[%.2f ms]**", avg))
+	elseif OS == "Windows" then -- TODO: Figure this out on windows
+		pingMessage:setContent("Could not run ping command on Windows.")
+	else
+		pingMessage:setContent(string.format("Could not run ping command on %s.", OS))
+	end
+	
+	pingHandle:close()
 end
 
 return {
