@@ -99,7 +99,7 @@ local function guildMessageReceived(message)
             local uptime = SystemTimer:getTime()
             local uptimeString = uptime:toString()
             message.channel:sendf("The bot has been up for %s", uptimeString)
-            OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
+            -- OPERATION_LOGGER:log(LogLevel.info, "Uptime: %s", uptimeString)
             return true
         end
         local aliases = GuildInfo.getTable(message.guild, "aliases")
